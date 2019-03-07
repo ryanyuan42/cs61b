@@ -1,25 +1,23 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TestOffByOne {
+public class TestOffByN {
     // You must use this CharacterComparator and not instantiate
     // new ones, or the autograder might be upset.
-    static CharacterComparator offByOne = new OffByOne();
+    static CharacterComparator offByN = new OffByN(5);
 
     // Your tests go here.
 
     @Test
     public void testEqualChars(){
-        assertTrue(offByOne.equalChars('a', 'b'));
-        assertFalse(offByOne.equalChars('a', 'e'));
-        assertFalse(offByOne.equalChars('a', 'a'));
+        assertTrue(offByN.equalChars('a', 'f'));
+        assertFalse(offByN.equalChars('f', 'h'));
     }
 
     @Test
     public void testIsPalindrome(){
-        OffByOne cc = new OffByOne();
-        assertTrue(cc.isPalindrome("flake", cc));
-        assertTrue(cc.isPalindrome("flke", cc));
+        OffByN cc = new OffByN(5);
+        assertTrue(cc.isPalindrome("abegf", cc));
         assertFalse(cc.isPalindrome("racecar", cc));
     }
 
