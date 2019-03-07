@@ -15,8 +15,10 @@ public class TestOffByOne {
     @Test
     public void testIsPalindrome() {
         OffByOne cc = new OffByOne();
-        assertTrue(cc.isPalindrome("flake", cc));
-        assertTrue(cc.isPalindrome("flke", cc));
-        assertFalse(cc.isPalindrome("racecar", cc));
+        Palindrome palindrome = new Palindrome();
+
+        assertTrue(palindrome.isPalindrome("flake", cc));
+        assertTrue(palindrome.isPalindrome("flke", cc));
+        assertFalse(palindrome.isPalindrome("racecar", cc));
     }
 }

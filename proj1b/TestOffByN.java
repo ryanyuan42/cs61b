@@ -17,8 +17,9 @@ public class TestOffByN {
     @Test
     public void testIsPalindrome(){
         OffByN cc = new OffByN(5);
-        assertTrue(cc.isPalindrome("abegf", cc));
-        assertFalse(cc.isPalindrome("racecar", cc));
+        Palindrome palindrome = new Palindrome();
+        assertTrue(palindrome.isPalindrome("abegf", cc));
+        assertFalse(palindrome.isPalindrome("racecar", cc));
     }
 
     // Uncomment this class once you've created your CharacterComparator interface and OffByOne class. **/
