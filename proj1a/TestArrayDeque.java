@@ -4,38 +4,31 @@ import static org.junit.Assert.*;
 public class TestArrayDeque {
 
     @Test
-    public void testAddLast(){
+    public void testAddLast() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i ++ ){
+        for (int i = 0; i < 10; i++) {
             list.addFirst(i);
         }
-
-        /*
-        list.addLast(0);
-        list.addLast(1);
-        list.addLast(2);
-        list.addLast(3);
-        */
 
 
     }
     @Test
-    public void testResize(){
+    public void testResize() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i ++ ){
+        for (int i = 0; i < 10; i++) {
             list.addFirst(i);
         }
 
-        for (int i = 0; i < 9; i ++ ){
+        for (int i = 0; i < 9; i++) {
             list.removeFirst();
             list.printDeque();
         }
 
-        for (int i = 1; i < 15; i++){
+        for (int i = 1; i < 15; i++) {
             list.addLast(i);
             list.printDeque();
         }
-        for (int i = 0; i < 14; i++){
+        for (int i = 0; i < 14; i++) {
             list.removeFirst();
             list.printDeque();
         }
@@ -44,9 +37,9 @@ public class TestArrayDeque {
     }
 
     @Test
-    public void testRemoveFirst(){
+    public void testRemoveFirst() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             list.addFirst(i);
         }
 
@@ -56,9 +49,9 @@ public class TestArrayDeque {
     }
 
     @Test
-    public void testPrintDeque(){
+    public void testPrintDeque() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             list.addLast(i);
         }
         System.out.println("Test PrintDeque():");
@@ -66,9 +59,9 @@ public class TestArrayDeque {
     }
 
     @Test
-    public void testGet(){
+    public void testGet() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             list.addLast(i);
         }
 
@@ -78,7 +71,7 @@ public class TestArrayDeque {
     }
 
     @Test
-    public void testIsEmpty(){
+    public void testIsEmpty() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
 
         assertTrue(list.isEmpty());
@@ -93,10 +86,10 @@ public class TestArrayDeque {
 
 
     @Test
-    public void testRemoveLast(){
+    public void testRemoveLast() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
 
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             list.addFirst(i);
         }
         int actual = list.removeLast();
@@ -106,7 +99,7 @@ public class TestArrayDeque {
     }
 
     @Test
-    public void testBasicGet(){
+    public void testBasicGet() {
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
 
         list.addLast(0);

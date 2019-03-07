@@ -1,9 +1,18 @@
+/**
+ * @author Ryan Yuan ryanyuan42@gmail.com
+ *         Created on 2019/3/7.
+ */
 public class ArrayDeque<T> implements Deque<T> {
+    /** Items, the array contains all the elements of the deque. */
     private T[] items;
+    /** The size of deque. */
     private int size;
+    /** nextFirst points to the next first of the deque. */
     private int nextFirst;
+    /** nextLast points to the next last of the deque. */
     private int nextLast;
-    private int Factor = 2;
+    /** resize factor. */
+    private int factor = 2;
 
     /**
      * Creates an empty array deque.
@@ -17,10 +26,9 @@ public class ArrayDeque<T> implements Deque<T> {
 
     /**
      * Resize the array list to the capacity.
-     * @param target: integer, the length of the new array.
+     * @param target integer, the length of the new array.
      * */
     private void resize(int target) {
-        // TODO: refactor resize to smaller functions.
         T[] oldItems = items;
         int oldFirst = plusOne(nextFirst);
         int oldLast = minusOne(nextLast);
@@ -36,28 +44,49 @@ public class ArrayDeque<T> implements Deque<T> {
         nextLast = plusOne(nextLast);
     }
 
+    /**
+     * Moves pointer to the prev position.
+     * @param index integer, current position.
+     * @return the index for the prev position.
+     * */
     private int minusOne(int index) {
         return Math.floorMod(index - 1, items.length);
     }
 
+    /**
+     * Moves pointer to the next position.
+     * @param index integer, current position.
+     * @return the index for the next position.
+     * */
     private int plusOne(int index) {
         return Math.floorMod(index + 1, items.length);
     }
 
-    private int plusOffset(int index, int offset){
+    /**
+     * Moves pointer to the n-step next position.
+     * @param index integer, current position.
+     * @param offset integer, steps to move.
+     * @return the index for the n-step next position.
+     * */
+    private int plusOffset(int index, int offset) {
         return Math.floorMod(index + offset + 1, items.length);
     }
-
-    private int plusOne(int index, int size) {
-        return Math.floorMod(index + 1, size);
+    /**
+     * Moves pointer to the next position.
+     * @param index integer, current position.
+     * @param length integer, array length.
+     * @return the index for the next position.
+     * */
+    private int plusOne(int index, int length) {
+        return Math.floorMod(index + 1, length);
     }
     /**
-     * Add an item to the start of the list
+     * Add an item to the start of the list.
      * @param x: the item to add to the list.
      */
     @Override
-    public void addFirst(T x){
-        if (size == items.length){
+    public void addFirst(T x) {
+        if (size == items.length) {
             resize(size * 2);
         }
         items[nextFirst] = x;
@@ -71,7 +100,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addLast(T x) {
         if (size == items.length) {
-            resize(size * Factor);
+            resize(size * factor);
         }
         items[nextLast] = x;
         nextLast = plusOne(nextLast);
@@ -82,13 +111,13 @@ public class ArrayDeque<T> implements Deque<T> {
      * Remove the last item of the list.
      * */
     @Override
-    public T removeLast(){
-        if (size == 0){
+    public T removeLast() {
+        if (size == 0) {
             return null;
         }
-        double usage_ratio = (float)size / items.length;
-        if (usage_ratio < 0.25) {
-            resize(items.length / Factor);
+        double usageRatio = (float) size / items.length;
+        if (usageRatio < 0.25) {
+            resize(items.length / factor);
         }
 
         nextLast = minusOne(nextLast);
@@ -101,12 +130,12 @@ public class ArrayDeque<T> implements Deque<T> {
      * Remove the first item of the list.
      * */
     @Override
-    public T removeFirst(){
-        if (size == 0){
+    public T removeFirst() {
+        if (size == 0) {
             return null;
         }
-        double usage_ratio = (float)size / items.length;
-        if (usage_ratio < 0.25) {
+        double usageRatio = (float) size / items.length;
+        if (usageRatio < 0.25) {
             resize(items.length / 2);
         }
         nextFirst = plusOne(nextFirst);
@@ -117,33 +146,20 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     /**
-     * Get the last item of the list.
-     * */
-
-    public T getLast() {
-        return items[nextLast - 1];
-    }
-
-    /**
-     * Get the last item of the list.
-     * */
-    public T getFirst() {
-        return items[nextFirst + 1];
-    }
-
-    /**
-     * Tell if the list is empty or not
+     * Tell if the list is empty or not.
+     * @return true if deque is empty, false otherwise.
      * */
     @Override
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size == 0;
     }
 
     /**
-     * Get the size of the array
+     * Get the size of the array.
+     * @return size of the array.
      */
     @Override
-    public int size(){
+    public int size() {
         return size;
     }
 
@@ -151,8 +167,8 @@ public class ArrayDeque<T> implements Deque<T> {
      * Print the deque.
      */
     @Override
-    public void printDeque(){
-        for (int i = plusOne(nextFirst); i != nextLast; i = plusOne(i)){
+    public void printDeque() {
+        for (int i = plusOne(nextFirst); i != nextLast; i = plusOne(i)) {
             System.out.print(items[i] + " ");
         }
         System.out.println();
@@ -163,7 +179,7 @@ public class ArrayDeque<T> implements Deque<T> {
      * Get the item at position index.
      */
     @Override
-    public T get(int index){
+    public T get(int index) {
         return items[plusOffset(nextFirst, index)];
     }
 

@@ -2,7 +2,7 @@
  * @author Ryan Yuan ryanyuan42@gmail.com
  *         Created on 2019/3/7.
  */
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> {
     /** Items, the array contains all the elements of the deque. */
     private T[] items;
     /** The size of deque. */
@@ -84,7 +84,6 @@ public class ArrayDeque<T> implements Deque<T> {
      * Add an item to the start of the list.
      * @param x: the item to add to the list.
      */
-    @Override
     public void addFirst(T x) {
         if (size == items.length) {
             resize(size * 2);
@@ -97,7 +96,6 @@ public class ArrayDeque<T> implements Deque<T> {
      * Add an item to the end of the list.
      * @param x: the item to add to the list.
      * */
-    @Override
     public void addLast(T x) {
         if (size == items.length) {
             resize(size * factor);
@@ -110,7 +108,6 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * Remove the last item of the list.
      * */
-    @Override
     public T removeLast() {
         if (size == 0) {
             return null;
@@ -129,7 +126,6 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * Remove the first item of the list.
      * */
-    @Override
     public T removeFirst() {
         if (size == 0) {
             return null;
@@ -146,27 +142,9 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     /**
-     * Get the last item of the list.
-     * @return last item.
-     * */
-
-    public T getLast() {
-        return items[nextLast - 1];
-    }
-
-    /**
-     * Get the last item of the list.
-     * @return first item.
-     * */
-    public T getFirst() {
-        return items[nextFirst + 1];
-    }
-
-    /**
      * Tell if the list is empty or not.
      * @return true if deque is empty, false otherwise.
      * */
-    @Override
     public boolean isEmpty() {
         return size == 0;
     }
@@ -175,7 +153,6 @@ public class ArrayDeque<T> implements Deque<T> {
      * Get the size of the array.
      * @return size of the array.
      */
-    @Override
     public int size() {
         return size;
     }
@@ -183,7 +160,6 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * Print the deque.
      */
-    @Override
     public void printDeque() {
         for (int i = plusOne(nextFirst); i != nextLast; i = plusOne(i)) {
             System.out.print(items[i] + " ");
@@ -195,7 +171,6 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * Get the item at position index.
      */
-    @Override
     public T get(int index) {
         return items[plusOffset(nextFirst, index)];
     }
