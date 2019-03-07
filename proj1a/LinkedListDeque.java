@@ -1,10 +1,10 @@
 public class LinkedListDeque<T> implements Deque<T> {
 
 
-    public class ItemNode {
-        public T first;
-        public ItemNode next;
-        public ItemNode prev;
+    private class ItemNode {
+        private T first;
+        private ItemNode next;
+        private ItemNode prev;
 
         public ItemNode(T f, ItemNode n, ItemNode p) {
             first = f;
@@ -13,9 +13,8 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    public int size;
-    public ItemNode sentinel;
-    // public ItemNode last;
+    private int size;
+    private ItemNode sentinel;
 
     public LinkedListDeque() {
         sentinel = new ItemNode(null, null, null);
@@ -24,62 +23,71 @@ public class LinkedListDeque<T> implements Deque<T> {
         size = 0;
     }
 
-    public LinkedListDeque(T item) {
-        sentinel = new ItemNode(null, null, null);
-        sentinel.next = new ItemNode(item, sentinel, sentinel);
-        sentinel.prev = sentinel.next;
-        size = 1;
-    }
-
-    public void addFirst(T item){
+    @Override
+    public void addFirst(T item) {
         sentinel.next.prev = new ItemNode(item, sentinel.next, sentinel);
         sentinel.next = sentinel.next.prev;
         size += 1;
     }
 
-    public void addLast(T item){
+    @Override
+    public void addLast(T item) {
         sentinel.prev.next = new ItemNode(item, sentinel, sentinel.prev);
         sentinel.prev = sentinel.prev.next;
         size += 1;
     }
 
-    public int size(){
+    @Override
+    public int size() {
         return size;
     }
 
-    public boolean isEmpty(){
+    @Override
+    public boolean isEmpty() {
         return size == 0;
     }
 
-    public void printDeque(){
+    @Override
+    public void printDeque() {
         int n = size;
         ItemNode ptr = sentinel;
         while (n > 0) {
             ptr = ptr.next;
-            System.out.println(ptr.first);
+            System.out.print(ptr.first + " ");
             n -= 1;
         }
+        System.out.println();
     }
 
-    public T removeLast(){
-        ItemNode last_item = sentinel.prev;
-        last_item.prev.next = sentinel;
-        last_item.prev = null;
-        last_item.next = null;
+    @Override
+    public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
+        ItemNode lastItem = sentinel.prev;
+        sentinel.prev = lastItem.prev;
+        lastItem.prev.next = sentinel;
+        lastItem.prev = null;
+        lastItem.next = null;
         size -= 1;
-        return last_item.first;
+        return lastItem.first;
     }
 
-    public T removeFirst(){
-        ItemNode first_item = sentinel.next;
-        sentinel.next = sentinel.next.next;
+    @Override
+    public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+        ItemNode firstItem = sentinel.next;
+        sentinel.next = firstItem.next;
         sentinel.next.prev = sentinel;
-        first_item.next = null;
-        first_item.prev = null;
+        firstItem.next = null;
+        firstItem.prev = null;
         size -= 1;
-        return first_item.first;
+        return firstItem.first;
     }
 
+    @Override
     public T get(int index) {
         ItemNode ptr = sentinel;
         while (index >= 0) {
@@ -89,13 +97,14 @@ public class LinkedListDeque<T> implements Deque<T> {
         return ptr.first;
     }
 
-    private T getRecursive(ItemNode p, int index){
-        if (index == 0){
+    private T getRecursive(ItemNode p, int index) {
+        if (index == 0) {
             return p.first;
         }
         return getRecursive(p.next, index - 1);
     }
-    public T getRecursive(int index){
+
+    public T getRecursive(int index) {
         return getRecursive(sentinel.next, index);
     }
 

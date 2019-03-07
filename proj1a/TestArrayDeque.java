@@ -42,57 +42,6 @@ public class TestArrayDeque {
 
         list.printDeque();
     }
-    @Test
-    public void testGetLast(){
-        ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 100; i++){
-            list.addLast(i);
-        }
-
-
-        list.removeLast();
-        int actual = list.getLast();
-        int expected = 98;
-        assertEquals(expected, actual);
-
-        ArrayDeque<Integer> list2 = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i ++ ){
-            list2.addFirst(i);
-        }
-
-        for (int i = 0; i < 9; i ++ ){
-            list2.removeFirst();
-        }
-
-        for (int i = 1; i < 15; i++){
-            list2.addLast(i);
-        }
-        for (int i = 0; i < 10; i++){
-            list2.removeFirst();
-        }
-
-        int actual2 = list2.getFirst();
-        int expected2 = 10;
-
-        int actual3 = list2.getLast();
-        assertEquals(expected2, actual2);
-        assertEquals(14, actual3);
-
-    }
-
-    @Test
-    public void testAddFirst(){
-        ArrayDeque<Integer> list = new ArrayDeque<Integer>();
-        for (int i = 0; i < 100; i++){
-            list.addFirst(i);
-        }
-
-        int actual = list.getLast();
-        int expected = 0;
-        assertEquals(expected, actual);
-
-
-    }
 
     @Test
     public void testRemoveFirst(){
@@ -132,12 +81,16 @@ public class TestArrayDeque {
     public void testIsEmpty(){
         ArrayDeque<Integer> list = new ArrayDeque<Integer>();
 
-        boolean actual = list.isEmpty();
-        assertTrue(actual);
+        assertTrue(list.isEmpty());
         list.addFirst(1);
-        assertFalse(list.isEmpty());
+        list.addFirst(2);
+        list.removeFirst();
+        list.removeFirst();
+        assertTrue(list.isEmpty());
 
+        list.removeFirst();
     }
+
 
     @Test
     public void testRemoveLast(){
@@ -149,6 +102,20 @@ public class TestArrayDeque {
         int actual = list.removeLast();
         assertEquals(0, actual);
 
+
     }
+
+    @Test
+    public void testBasicGet(){
+        ArrayDeque<Integer> list = new ArrayDeque<Integer>();
+
+        list.addLast(0);
+        int actual = list.get(0);
+        assertEquals(0, actual);
+        list.removeLast();
+
+
+    }
+
 
 }

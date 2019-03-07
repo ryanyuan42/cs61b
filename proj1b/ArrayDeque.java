@@ -83,6 +83,9 @@ public class ArrayDeque<T> implements Deque<T> {
      * */
     @Override
     public T removeLast(){
+        if (size == 0){
+            return null;
+        }
         double usage_ratio = (float)size / items.length;
         if (usage_ratio < 0.25) {
             resize(items.length / Factor);
@@ -99,6 +102,9 @@ public class ArrayDeque<T> implements Deque<T> {
      * */
     @Override
     public T removeFirst(){
+        if (size == 0){
+            return null;
+        }
         double usage_ratio = (float)size / items.length;
         if (usage_ratio < 0.25) {
             resize(items.length / 2);
