@@ -118,7 +118,24 @@ public class IntList {
      * * destructive method.
      */
     public static IntList reverse(IntList A) {
-        return null;
+        IntList cur = A;
+        IntList last = null;
+        IntList next;
+        boolean first = true;
+        while (cur != null) {
+            next = cur.rest;
+            if (!first) {
+                cur.rest = last;
+            }
+            last = cur;
+            if (first) {
+                cur.rest = null;
+                first = false;
+            }
+            A = cur;
+            cur = next;
+        }
+        return A;
     }
 
 
