@@ -114,6 +114,23 @@ public class IntList {
     }
 
     /**
+     * Returns a reversed list of A recursively
+     *
+     */
+    public static IntList reverseRecur(IntList A) {
+        return reverseRecur(null, A);
+    }
+
+    public static IntList reverseRecur(IntList prev, IntList A) {
+        if (A == null | A.rest == null) {
+            A.rest = prev;
+            return A;
+        }
+        IntList temp = A.rest;
+        A.rest = prev;
+        return reverseRecur(A, temp);
+    }
+    /**
      * Returns a reversed list of A
      * * destructive method.
      */
