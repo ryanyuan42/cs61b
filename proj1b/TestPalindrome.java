@@ -21,7 +21,24 @@ public class TestPalindrome {
     public void testIsPalindrome() {
 
 
-        assertTrue(palindrome.isPalindrome(""));
+        CharacterComparator cc = new OffByN(1);
+        assertTrue(palindrome.isPalindrome("fl !ke", cc));
+        assertTrue(palindrome.isPalindrome("A", cc));
+        assertTrue(palindrome.isPalindrome(" ", cc));
+        assertTrue(palindrome.isPalindrome("!", cc));
+        assertTrue(palindrome.isPalindrome("AB", cc));
+        assertTrue(palindrome.isPalindrome("a", cc));
+        assertTrue(palindrome.isPalindrome("ab", cc));
+        assertTrue(palindrome.isPalindrome("ba", cc));
+        assertTrue(palindrome.isPalindrome("&%", cc));
+        assertTrue(palindrome.isPalindrome("%&", cc));
+        assertFalse(palindrome.isPalindrome("ac", cc));
+        assertFalse(palindrome.isPalindrome("aa", cc));
+        assertFalse(palindrome.isPalindrome("ad", cc));
+        assertFalse(palindrome.isPalindrome("%!", cc));
+        assertFalse(palindrome.isPalindrome("aaaaab", cc));
+        assertFalse(palindrome.isPalindrome("rancor", cc));
+
         assertFalse(palindrome.isPalindrome("R@!!@r"));
         assertTrue(palindrome.isPalindrome("a"));
         assertFalse(palindrome.isPalindrome("cat"));
