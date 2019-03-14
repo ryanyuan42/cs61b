@@ -7,7 +7,7 @@ public class OffByN implements CharacterComparator {
     }
 
     public boolean equalChars(char x, char y) {
-        return Math.abs(Character.toUpperCase(x) - Character.toUpperCase(y)) == offset;
+        return Math.abs(x - y) == offset;
     }
 
 }

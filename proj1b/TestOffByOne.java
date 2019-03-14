@@ -23,7 +23,7 @@ public class TestOffByOne {
         assertTrue(palindrome.isPalindrome("flke", cc));
         assertFalse(palindrome.isPalindrome("racecar", cc));
 
-        assertTrue(palindrome.isPalindrome(" !Racecar! "));
+        assertFalse(palindrome.isPalindrome(" !Racecar! "));
         assertTrue(palindrome.isPalindrome("racecar"));
     }
 }

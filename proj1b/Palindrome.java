@@ -22,8 +22,8 @@ public class Palindrome {
         if (wordDeque.size() == 1 | wordDeque.size() == 0) {
             return true;
         }
-        char start = Character.toUpperCase(wordDeque.removeFirst());
-        char end = Character.toUpperCase(wordDeque.removeLast());
+        char start = wordDeque.removeFirst();
+        char end = wordDeque.removeLast();
         return (start == end) & (isPalindrome(wordDeque));
     }
 

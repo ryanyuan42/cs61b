@@ -16,9 +16,9 @@ public class TestOffByN {
 
     @Test
     public void testIsPalindrome() {
-        OffByN cc = new OffByN(5);
+        OffByN cc = new OffByN(0);
         Palindrome palindrome = new Palindrome();
-        assertTrue(palindrome.isPalindrome("abegf", cc));
-        assertFalse(palindrome.isPalindrome("racecar", cc));
+        assertFalse(palindrome.isPalindrome("abegf", cc));
+        assertTrue(palindrome.isPalindrome("racecar", cc));
     }
 }
