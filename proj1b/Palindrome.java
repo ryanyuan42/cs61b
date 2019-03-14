@@ -1,5 +1,5 @@
 public class Palindrome {
-    public static Deque<Character> wordToDeque(String word) {
+    public Deque<Character> wordToDeque(String word) {
         Deque<Character> list = new ArrayDeque<Character>();
         for (int i = 0; i < word.length(); i++) {
             list.addLast(word.charAt(i));
@@ -7,7 +7,7 @@ public class Palindrome {
         return list;
     }
 
-    public static boolean isPalindrome(String word) {
+    public boolean isPalindrome(String word) {
         int wordLength = word.length();
         if (wordLength == 0 | wordLength == 1) {
             return true;
@@ -18,7 +18,7 @@ public class Palindrome {
 
     }
 
-    private static boolean isPalindrome(Deque<Character> wordDeque) {
+    private boolean isPalindrome(Deque<Character> wordDeque) {
         if (wordDeque.size() == 1 | wordDeque.size() == 0) {
             return true;
         }
@@ -27,7 +27,7 @@ public class Palindrome {
         return (start == end) & (isPalindrome(wordDeque));
     }
 
-    public static boolean isPalindrome(String word, CharacterComparator cc) {
+    public boolean isPalindrome(String word, CharacterComparator cc) {
         char start;
         char end;
         int wordLength = word.length();
