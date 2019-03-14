@@ -8,6 +8,7 @@ public class TestOffByOne {
     @Test
     public void testEqualChars() {
         assertTrue(offByOne.equalChars('a', 'b'));
+        assertTrue(offByOne.equalChars('a', 'B'));
         assertFalse(offByOne.equalChars('a', 'e'));
         assertFalse(offByOne.equalChars('a', 'a'));
     }
@@ -18,7 +19,11 @@ public class TestOffByOne {
         Palindrome palindrome = new Palindrome();
 
         assertTrue(palindrome.isPalindrome("flake", cc));
+        assertTrue(palindrome.isPalindrome("&%", cc));
         assertTrue(palindrome.isPalindrome("flke", cc));
         assertFalse(palindrome.isPalindrome("racecar", cc));
+
+        assertTrue(palindrome.isPalindrome(" !Racecar! "));
+        assertTrue(palindrome.isPalindrome("racecar"));
     }
 }
