@@ -1,11 +1,8 @@
 package byog.lab5;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-import sun.security.x509.SubjectKeyIdentifierExtension;
 
 import java.util.Random;
 
