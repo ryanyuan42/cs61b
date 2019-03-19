@@ -36,7 +36,7 @@ public class Floor extends GameObject{
             int[] endPosLeft = generateLeftPath(curX, curY);
             int[] endPosRight = generateRightPath(curX, curY);
 
-            if (count % 5 == 0){
+            if (count % 7 == 0){
                 chooseNumber = RANDOM.nextInt(100);
             }
             switch (chooseNumber % 10){

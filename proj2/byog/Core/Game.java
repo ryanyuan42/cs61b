@@ -3,8 +3,10 @@ package byog.Core;
 import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.regex.*;
 
@@ -12,36 +14,7 @@ public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
-    public static final int HEIGHT = 40;
-
-    public void showMainPage() {
-        WorldGenerator worldGenerator;
-        TETile[][] world;
-
-        drawMainPage();
-        if (StdDraw.hasNextKeyTyped()) {
-            char c = StdDraw.nextKeyTyped();
-            switch (c) {
-                case 'n':
-                    worldGenerator = new WorldGenerator(80, 40);
-                    world = worldGenerator.generate();
-                    break;
-                case 'N':
-                    worldGenerator = new WorldGenerator(80, 40);
-                    world = worldGenerator.generate();
-                    break;
-                case 'q':
-                    System.exit(0);
-                    break;
-                case 'Q':
-                    System.exit(0);
-                    break;
-                case 'l': loadWorld(); break;
-                case 'L': ; break;
-                default:
-            }
-        }
-    }
+    public static final int HEIGHT = 60;
 
     public void drawMainPage() {
         StdDraw.clear(StdDraw.BLACK);
@@ -52,12 +25,37 @@ public class Game {
         StdDraw.show();
         StdDraw.pause(100);
     }
+
+    public void showUserTypeText() {
+        StdDraw.text(0.5, 0.75, "Random seed: ");
+        StdDraw.show();
+    }
+
+    public int userInputSeed() {
+        double curPos = 0.45;
+        String seedStr = "";
+
+        while (true) {
+            if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
+                break;
+            }
+
+            if (StdDraw.hasNextKeyTyped()) {
+
+                String c = Character.toString(StdDraw.nextKeyTyped());
+                seedStr += c;
+                curPos += 0.03;
+                StdDraw.text(curPos, 0.65, c);
+            }
+        }
+        return seedStr.equals("") ? 42: Integer.parseInt(seedStr);
+    }
+
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
-        int worldWidth = 80;
-        int worldHeight = 60;
+        int seed;
         WorldGenerator worldGenerator;
         TETile[][] world = null;
         boolean start = false;
@@ -68,12 +66,18 @@ public class Game {
                 char c = StdDraw.nextKeyTyped();
                 switch (c) {
                     case 'n':
-                        worldGenerator = new WorldGenerator(worldWidth, worldHeight);
+                        showUserTypeText();
+                        seed = userInputSeed();
+                        GameObject.setSeed(seed);
+                        worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
                         world = worldGenerator.generate();
                         start = true;
                         break;
                     case 'N':
-                        worldGenerator = new WorldGenerator(worldWidth, worldHeight);
+                        showUserTypeText();
+                        seed = userInputSeed();
+                        GameObject.setSeed(seed);
+                        worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
                         world = worldGenerator.generate();
                         start = true;
                         break;
@@ -83,17 +87,60 @@ public class Game {
                     case 'Q':
                         System.exit(0);
                         break;
-                    case 'l': ; break;
-                    case 'L': ; break;
+                    case 'l':
+                        world = loadWorld();
+                        break;
+                    case 'L':
+                        world = loadWorld();
+                        break;
                     default:
                 }
             }
         }
 
         TERenderer ter = new TERenderer();
-        ter.initialize(worldWidth, worldHeight);
-        ter.renderFrame(world);
 
+        int[] startPos = pickRandomStart(world);
+        int startX = startPos[0];
+        int startY = startPos[1];
+        Explorer ryan = new Explorer(startX, startY, "ryan", 100);
+        world[startX][startY] = ryan.getElement();
+
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(world);
+        while (true) {
+
+
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
+                switch (c) {
+                    case 'w' : ryan.moveUp(world); break;
+                    case 'a' : ryan.moveLeft(world); break;
+                    case 's' : ryan.moveDown(world); break;
+                    case 'd' : ryan.moveRight(world); break;
+                    default:
+                }
+            }
+            ter.renderFrame(world);
+            StdDraw.pause(5);
+        }
+    }
+
+    public int[] pickRandomStart(TETile[][] world) {
+        int x = 40;
+        int y = 40;
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                if (world[i][j].equals(Tileset.FLOOR)) {
+                    x = i;
+                    y = j;
+                    break;
+                }
+            }
+        }
+        int[] start = {x, y};
+        return start;
     }
 
     /**
