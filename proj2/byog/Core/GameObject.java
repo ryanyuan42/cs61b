@@ -5,22 +5,21 @@ import byog.TileEngine.TETile;
 import java.util.Random;
 
 public abstract class GameObject {
-    protected static Random RANDOM;
+    protected static Random RANDOM = new Random(42);
     protected int xPos;
     protected int yPos;
     protected int xMaxLength;
     protected int yMaxLength;
 
     public GameObject() {
-        RANDOM = new Random(1107);
         xPos = 0;
         yPos = 0;
         xMaxLength = 40;
         yMaxLength = 40;
     }
 
-    public static void setSeed(int seed) {
-        RANDOM = new Random(seed);
+    public static void setSeed(long seed) {
+        RANDOM.setSeed(seed);
     }
 
     public GameObject(int w, int h) {

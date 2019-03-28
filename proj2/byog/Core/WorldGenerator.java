@@ -37,7 +37,7 @@ public class WorldGenerator {
     }
 
 
-    public void setSeed(int seed) {
+    public void setSeed(long seed) {
         GameObject.setSeed(seed);
     }
 

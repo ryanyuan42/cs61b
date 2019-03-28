@@ -2,6 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import sun.plugin2.message.GetAppletMessage;
 
 import java.awt.event.KeyEvent;
 

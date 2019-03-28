@@ -9,12 +9,15 @@ import edu.princeton.cs.introcs.StdDraw;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.regex.*;
+import java.awt.*;
 
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 60;
+    private WorldGenerator worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
+    private long SEED;
 
     public void drawMainPage() {
         StdDraw.clear(StdDraw.BLACK);
@@ -55,7 +58,6 @@ public class Game {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
-        int seed;
         WorldGenerator worldGenerator;
         TETile[][] world = null;
         boolean start = false;
@@ -63,20 +65,12 @@ public class Game {
         while(!start){
             drawMainPage();
             if (StdDraw.hasNextKeyTyped()) {
-                char c = StdDraw.nextKeyTyped();
+                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
                 switch (c) {
                     case 'n':
                         showUserTypeText();
-                        seed = userInputSeed();
-                        GameObject.setSeed(seed);
-                        worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
-                        world = worldGenerator.generate();
-                        start = true;
-                        break;
-                    case 'N':
-                        showUserTypeText();
-                        seed = userInputSeed();
-                        GameObject.setSeed(seed);
+                        SEED = userInputSeed();
+                        GameObject.setSeed(SEED);
                         worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
                         world = worldGenerator.generate();
                         start = true;
@@ -84,23 +78,18 @@ public class Game {
                     case 'q':
                         System.exit(0);
                         break;
-                    case 'Q':
-                        System.exit(0);
-                        break;
                     case 'l':
                         world = loadWorld();
+                        start = true;
                         break;
-                    case 'L':
-                        world = loadWorld();
-                        break;
-                    default:
+                    default: break;
                 }
             }
         }
 
         TERenderer ter = new TERenderer();
 
-        int[] startPos = pickRandomStart(world);
+        int[] startPos = pickStart(world);
         int startX = startPos[0];
         int startY = startPos[1];
         Explorer ryan = new Explorer(startX, startY, "ryan", 100);
@@ -109,7 +98,14 @@ public class Game {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
         while (true) {
-
+            if (StdDraw.isKeyPressed(KeyEvent.VK_SHIFT) & StdDraw.isKeyPressed(KeyEvent.VK_SEMICOLON)) {
+                String command = listenCommand();
+                switch (command) {
+                    case ":s": saveWorld(); break;
+                    case ":q": quit(); break;
+                    default: break;
+                }
+            }
 
             if (StdDraw.hasNextKeyTyped()) {
                 char c = Character.toLowerCase(StdDraw.nextKeyTyped());
@@ -118,15 +114,49 @@ public class Game {
                     case 'a' : ryan.moveLeft(world); break;
                     case 's' : ryan.moveDown(world); break;
                     case 'd' : ryan.moveRight(world); break;
-                    default:
+                    default: break;
                 }
             }
+
             ter.renderFrame(world);
             StdDraw.pause(5);
         }
     }
 
-    public int[] pickRandomStart(TETile[][] world) {
+    public void quit() {
+        System.exit(0);
+    }
+
+    public String listenCommand() {
+        String command = "";
+        String showCommand;
+        double x = 0.5;
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                showCommand = String.valueOf(c);
+                command += showCommand;
+                drawCommand(x, showCommand);
+                x += 0.7;
+                StdDraw.pause(100);
+            }
+            if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
+                break;
+            }
+        }
+        return command;
+    }
+
+    public void drawCommand(double x, String s) {
+        Font font = new Font("Arial", Font.PLAIN, 16);
+        StdDraw.setPenColor(Color.yellow);
+        StdDraw.setFont(font);
+
+        StdDraw.text(x, HEIGHT - 5, s);
+        StdDraw.show();
+    }
+
+    public int[] pickStart(TETile[][] world) {
         int x = 40;
         int y = 40;
 
@@ -159,42 +189,55 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        int seed = parseArgument(input);
-        WorldGenerator worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
-        worldGenerator.setSeed(seed);
-        TETile[][] finalWorldFrame = worldGenerator.generate();
-        saveWorld(finalWorldFrame);
+        TETile[][] finalWorldFrame =  parseArgument(input);
         return finalWorldFrame;
     }
 
-    public int parseArgument(String input) {
-        String patternString = "^N(\\d+)";
-        String seedStr = "";
+    public TETile[][] parseArgument(String input) {
+        int n = input.length();
+        char cur;
+        TETile[][] world = null;
+        String seed = "";
+        int seedNum;
 
-        Pattern pattern = Pattern.compile(patternString);
-
-        Matcher matcher = pattern.matcher(input);
-
-        while (matcher.find()) {
-            seedStr = matcher.group(1);
+        for (int i = 0; i < n; i++) {
+            cur = Character.toLowerCase(input.charAt(i));
+            switch (cur) {
+                case 'n':
+                    while (i < n - 1) {
+                        char c = input.charAt(i+1);
+                        if (Character.isDigit(c)) {
+                            seed += c;
+                        } else {
+                            break;
+                        }
+                        i += 1;
+                    }
+                    SEED = Long.parseLong(seed);
+                    worldGenerator.setSeed(SEED);
+                    world = worldGenerator.generate();
+                    break;
+                case 'l': world = loadWorld(); break;
+                case 's':
+                    saveWorld();
+                    break;
+                case 'q': System.exit(0); break;
+            }
         }
-        if (seedStr.equals("")) {
-            return 42;
-        }
-        else {
-            return Integer.parseInt(seedStr);
-        }
+        return world;
     }
 
-    private static TETile[][] loadWorld() {
-        File f = new File("./world.ser");
+    private TETile[][] loadWorld() {
+        File f = new File("./world.txt");
         if (f.exists()) {
             try {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);
-                TETile[][] loadWorld = (TETile[][]) os.readObject();
+                SEED = (long) os.readObject();
+                worldGenerator.setSeed(SEED);
+                TETile[][] world = worldGenerator.generate();
                 os.close();
-                return loadWorld;
+                return world;
             } catch (FileNotFoundException e) {
                 System.out.println("file not found");
                 System.exit(0);
@@ -211,15 +254,15 @@ public class Game {
         return new TETile[WIDTH][HEIGHT];
     }
 
-    private static void saveWorld(TETile[][] w) {
-        File f = new File("./world.ser");
+    private void saveWorld() {
+        File f = new File("./world.txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
             }
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
-            os.writeObject(w);
+            os.writeObject(SEED);
             os.close();
         }  catch (FileNotFoundException e) {
             System.out.println("file not found");
