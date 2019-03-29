@@ -8,6 +8,7 @@ import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.regex.*;
 import java.awt.*;
 
@@ -18,6 +19,7 @@ public class Game {
     public static final int HEIGHT = 60;
     private WorldGenerator worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
     private long SEED;
+    private ArrayList<Location> personLocationList = new ArrayList<Location>();
 
     public void drawMainPage() {
         StdDraw.clear(StdDraw.BLACK);
@@ -31,7 +33,6 @@ public class Game {
 
     public void showUserTypeText() {
         StdDraw.text(0.5, 0.75, "Random seed: ");
-        StdDraw.show();
     }
 
     public int userInputSeed() {
@@ -42,13 +43,21 @@ public class Game {
             if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
                 break;
             }
-
             if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                if (c == KeyEvent.VK_BACK_SPACE) {
+                    if (!seedStr.equals("")){
+                        seedStr = seedStr.substring(0, seedStr.length() - 1);
+                    }
+                }
+                else {
+                    seedStr += c;
+                }
+                StdDraw.setPenColor(Color.black);
+                StdDraw.filledRectangle(curPos, 0.65, 1, 0.05);
+                StdDraw.setPenColor(Color.yellow);
+                StdDraw.textLeft(curPos, 0.65, seedStr);
 
-                String c = Character.toString(StdDraw.nextKeyTyped());
-                seedStr += c;
-                curPos += 0.03;
-                StdDraw.text(curPos, 0.65, c);
             }
         }
         return seedStr.equals("") ? 42: Integer.parseInt(seedStr);
@@ -93,6 +102,7 @@ public class Game {
         int startX = startPos[0];
         int startY = startPos[1];
         Explorer ryan = new Explorer(startX, startY, "ryan", 100);
+        personLocationList.add(ryan.getLocation());
         world[startX][startY] = ryan.getElement();
 
         ter.initialize(WIDTH, HEIGHT);
@@ -129,30 +139,41 @@ public class Game {
 
     public String listenCommand() {
         String command = "";
-        String showCommand;
         double x = 0.5;
         while (true) {
-            if (StdDraw.hasNextKeyTyped()) {
-                char c = StdDraw.nextKeyTyped();
-                showCommand = String.valueOf(c);
-                command += showCommand;
-                drawCommand(x, showCommand);
-                x += 0.7;
-                StdDraw.pause(100);
-            }
             if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
                 break;
             }
+
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                if (c == KeyEvent.VK_BACK_SPACE) {
+                    if (!command.equals("")){
+                        command = command.substring(0, command.length() - 1);
+                        drawCommand(x, command);
+                    } else{
+                        break;
+                    }
+                } else{
+                    command += c;
+                    drawCommand(x, command);
+                }
+
+                StdDraw.pause(100);
+            }
+
         }
         return command;
     }
 
     public void drawCommand(double x, String s) {
+        StdDraw.setPenColor(Color.black);
+        StdDraw.filledRectangle(x, HEIGHT - 2, 10, 5);
         Font font = new Font("Arial", Font.PLAIN, 16);
         StdDraw.setPenColor(Color.yellow);
         StdDraw.setFont(font);
 
-        StdDraw.text(x, HEIGHT - 5, s);
+        StdDraw.textLeft(x, HEIGHT - 2, s);
         StdDraw.show();
     }
 
@@ -234,8 +255,12 @@ public class Game {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);
                 SEED = (long) os.readObject();
+                personLocationList = (ArrayList<Location>) os.readObject();
                 worldGenerator.setSeed(SEED);
                 TETile[][] world = worldGenerator.generate();
+                for (Location location : personLocationList) {
+                    world[location.getxPos()][location.getyPos()] = Tileset.PLAYER;
+                }
                 os.close();
                 return world;
             } catch (FileNotFoundException e) {
@@ -263,6 +288,7 @@ public class Game {
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(SEED);
+            os.writeObject(personLocationList);
             os.close();
         }  catch (FileNotFoundException e) {
             System.out.println("file not found");

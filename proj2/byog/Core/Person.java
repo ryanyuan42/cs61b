@@ -2,15 +2,25 @@ package byog.Core;
 
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-import sun.plugin2.message.GetAppletMessage;
+import java.io.*;
 
-import java.awt.event.KeyEvent;
-
-public abstract class Person {
+public abstract class Person implements Serializable{
+    private static final long serialVersionUID = 135243643120935L;
     protected String name;
     protected int health;
     protected int xPos;
     protected int yPos;
+    protected Location location = new Location();
+
+
+
+    public void updateLocation() {
+        location.setxPos(xPos);
+        location.setyPos(yPos);
+    }
+    public Location getLocation() {
+        return location;
+    }
 
     public Person(){
         xPos = 0;

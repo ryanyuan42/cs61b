@@ -28,7 +28,7 @@ public class Explorer extends Person {
             yPos = newYPos;
             world[xPos][yPos] = getElement();
         }
-
+        updateLocation();
     }
 
     public void moveDown(TETile[][] world) {
@@ -38,6 +38,7 @@ public class Explorer extends Person {
             yPos = newYPos;
             world[xPos][yPos] = getElement();
         }
+        updateLocation();
 
     }
 
@@ -48,6 +49,7 @@ public class Explorer extends Person {
             xPos = newXPos;
             world[xPos][yPos] = getElement();
         }
+        updateLocation();
 
     }
 
@@ -58,6 +60,6 @@ public class Explorer extends Person {
             xPos = newXPos;
             world[xPos][yPos] = getElement();
         }
-
+        updateLocation();
     }
 }
