@@ -16,6 +16,7 @@ public class WorldGenerator {
     private static final int xSTART = 3;
     private static final int ySTART = 3;
     private TETile[][] world;
+    private ArrayList<int[]> wallPosList = new ArrayList<>();
 
 
     public WorldGenerator(int w, int h) {
@@ -26,19 +27,70 @@ public class WorldGenerator {
         fillWorldWithNothing();
     }
 
+    public TETile[][] getWorld() {
+        return world;
+    }
+
+    public void addPerson(int personX, int personY, Person p) {
+        world[personX][personY] = p.getElement();
+    }
+
+    public void addPerson(Person p) {
+        world[p.getxPos()][p.getyPos()] = p.getElement();
+    }
+
     /**
      * Generate a random world
      * Must include rooms and hallway
      */
-    public TETile[][] generate() {
+    public void generate() {
         addFloor(3, 3);
         addFloor(20, 10);
-        return world;
+        Room room = new Room(8, 5);
+        addRoom(room);
     }
 
 
     public void setSeed(long seed) {
         GameObject.setSeed(seed);
+    }
+
+    /**
+     * @param room: the room to add to the world.
+     */
+    public void addRoom(Room room) {
+        int[] roomPos = room.chooseDoorPos(wallPosList);
+        int pointX = roomPos[0];
+        int pointY = roomPos[1];
+        ArrayList<String> availableSides = new ArrayList<>();
+        if (world[xOffset(pointX, -1)][pointY].equals(Tileset.NOTHING)) {
+            availableSides.add("r");
+        }
+        if (world[xOffset(pointX, 1)][pointY].equals(Tileset.NOTHING)) {
+            availableSides.add("l");
+        }
+        if (world[pointX][yOffset(pointY, 1)].equals(Tileset.NOTHING)) {
+            availableSides.add("d");
+        }
+        if (world[pointX][yOffset(pointY, -1)].equals(Tileset.NOTHING)) {
+            availableSides.add("u");
+        }
+        int sideIndex = GameObject.RANDOM.nextInt(availableSides.size());
+        String side = availableSides.get(sideIndex);
+        switch (side) {
+            case "l": room.doorLeft(); break;
+            case "r": room.doorRight(); pointX -= room.getXMaxLength() - 1; break;
+            case "u": room.doorUp(); pointY -= room.getYMaxLength() - 1; break;
+            case "d": room.doorDown(); break;
+        }
+
+        int xRest = Math.min(room.getXMaxLength(), WIDTH - pointX);
+        int yRest = Math.min(room.getYMaxLength(), HEIGHT - pointY);
+        for (int i = 0; i < xRest; i++) {
+            for (int j = 0; j < yRest; j++) {
+                world[xOffset(i, pointX)][yOffset(j, pointY)] = room.getElement(i, j);
+            }
+        }
     }
 
     public void addFloor(int floorX, int floorY) {
@@ -62,15 +114,23 @@ public class WorldGenerator {
                     pointY = yOffset(j, floorY);
                     if (world[xOffset(pointX, -1)][pointY].equals(Tileset.NOTHING)) {
                         world[xOffset(pointX, -1)][pointY] = Tileset.WALL;
+                        int[] wallPos = {xOffset(pointX, -1), pointY};
+                        wallPosList.add(wallPos);
                     }
                     if (world[xOffset(pointX, 1)][pointY].equals(Tileset.NOTHING)) {
                         world[xOffset(pointX, 1)][pointY] = Tileset.WALL;
+                        int[] wallPos = {xOffset(pointX, 1), pointY};
+                        wallPosList.add(wallPos);
                     }
                     if (world[pointX][yOffset(pointY, 1)].equals(Tileset.NOTHING)) {
                         world[pointX][yOffset(pointY, 1)] = Tileset.WALL;
+                        int[] wallPos = {pointX, yOffset(pointY, 1)};
+                        wallPosList.add(wallPos);
                     }
                     if (world[pointX][yOffset(pointY, -1)].equals(Tileset.NOTHING)) {
                         world[pointX][yOffset(pointY, -1)] = Tileset.WALL;
+                        int[] wallPos = {pointX, yOffset(pointY, -1)};
+                        wallPosList.add(wallPos);
                     }
                 }
             }
@@ -144,7 +204,8 @@ public class WorldGenerator {
     public static void main(String[] args) {
         GameObject.setSeed(1107);
         WorldGenerator worldGenerator = new WorldGenerator(80, 60);
-        TETile[][] world = worldGenerator.generate();
+        worldGenerator.generate();
+        TETile[][] world = worldGenerator.getWorld();
 
         TERenderer ter = new TERenderer();
         ter.initialize(80, 60);

@@ -4,7 +4,6 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
 public class Explorer extends Person {
-    private TETile element = Tileset.PLAYER;
 
     public Explorer(int x, int y, String n, int h) {
         xPos = x;
@@ -13,12 +12,11 @@ public class Explorer extends Person {
         health = h;
     }
 
-    public TETile getElement() {
-        return element;
-    }
-
-    public void setElement(TETile s) {
-        element = s;
+    public Explorer(PersonData d) {
+        xPos = d.getxPos();
+        yPos = d.getyPos();
+        name = d.getName();
+        health = d.getHealth();
     }
 
     public void moveUp(TETile[][] world) {
@@ -28,7 +26,7 @@ public class Explorer extends Person {
             yPos = newYPos;
             world[xPos][yPos] = getElement();
         }
-        updateLocation();
+        updateData();
     }
 
     public void moveDown(TETile[][] world) {
@@ -38,7 +36,7 @@ public class Explorer extends Person {
             yPos = newYPos;
             world[xPos][yPos] = getElement();
         }
-        updateLocation();
+        updateData();
 
     }
 
@@ -49,8 +47,7 @@ public class Explorer extends Person {
             xPos = newXPos;
             world[xPos][yPos] = getElement();
         }
-        updateLocation();
-
+        updateData();
     }
 
     public void moveRight(TETile[][] world) {
@@ -60,6 +57,6 @@ public class Explorer extends Person {
             xPos = newXPos;
             world[xPos][yPos] = getElement();
         }
-        updateLocation();
+        updateData();
     }
 }

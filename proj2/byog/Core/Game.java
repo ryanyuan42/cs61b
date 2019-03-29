@@ -20,6 +20,7 @@ public class Game {
     private WorldGenerator worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
     private long SEED;
     private ArrayList<Location> personLocationList = new ArrayList<Location>();
+    private Person player = new Explorer(0,0, "ryan", 100);
 
     public void drawMainPage() {
         StdDraw.clear(StdDraw.BLACK);
@@ -40,11 +41,12 @@ public class Game {
         String seedStr = "";
 
         while (true) {
-            if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
-                break;
-            }
+
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
+                if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
+                    break;
+                }
                 if (c == KeyEvent.VK_BACK_SPACE) {
                     if (!seedStr.equals("")){
                         seedStr = seedStr.substring(0, seedStr.length() - 1);
@@ -63,6 +65,35 @@ public class Game {
         return seedStr.equals("") ? 42: Integer.parseInt(seedStr);
     }
 
+    public void playerInteract(TETile[][] world, Person player) {
+        while (true) {
+            // 15235
+
+            if (StdDraw.isKeyPressed(KeyEvent.VK_SHIFT) & StdDraw.isKeyPressed(KeyEvent.VK_SEMICOLON)) {
+                String command = listenCommand();
+                switch (command) {
+                    case ":s": saveWorld(); break;
+                    case ":q": quit(); break;
+                    default: break;
+                }
+            }
+
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
+
+                switch (c) {
+                    case 'w' : player.moveUp(world); break;
+                    case 'a' : player.moveLeft(world); break;
+                    case 's' : player.moveDown(world); break;
+                    case 'd' : player.moveRight(world); break;
+                    default: break;
+                }
+            }
+
+            ter.renderFrame(world);
+            StdDraw.pause(5);
+        }
+    }
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
@@ -73,6 +104,7 @@ public class Game {
 
         while(!start){
             drawMainPage();
+
             if (StdDraw.hasNextKeyTyped()) {
                 char c = Character.toLowerCase(StdDraw.nextKeyTyped());
                 switch (c) {
@@ -81,7 +113,16 @@ public class Game {
                         SEED = userInputSeed();
                         GameObject.setSeed(SEED);
                         worldGenerator = new WorldGenerator(WIDTH, HEIGHT);
-                        world = worldGenerator.generate();
+                        worldGenerator.generate();
+                        world = worldGenerator.getWorld();
+                        int[] startPos = pickStart(world);
+                        int startX = startPos[0];
+                        int startY = startPos[1];
+                        player.setxPos(startX);
+                        player.setyPos(startY);
+                        player.setElement(Tileset.PLAYER);
+                        personLocationList.add(player.getLocation());
+                        worldGenerator.addPerson(startX, startY, player);
                         start = true;
                         break;
                     case 'q':
@@ -96,41 +137,9 @@ public class Game {
             }
         }
 
-        TERenderer ter = new TERenderer();
-
-        int[] startPos = pickStart(world);
-        int startX = startPos[0];
-        int startY = startPos[1];
-        Explorer ryan = new Explorer(startX, startY, "ryan", 100);
-        personLocationList.add(ryan.getLocation());
-        world[startX][startY] = ryan.getElement();
-
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
-        while (true) {
-            if (StdDraw.isKeyPressed(KeyEvent.VK_SHIFT) & StdDraw.isKeyPressed(KeyEvent.VK_SEMICOLON)) {
-                String command = listenCommand();
-                switch (command) {
-                    case ":s": saveWorld(); break;
-                    case ":q": quit(); break;
-                    default: break;
-                }
-            }
-
-            if (StdDraw.hasNextKeyTyped()) {
-                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
-                switch (c) {
-                    case 'w' : ryan.moveUp(world); break;
-                    case 'a' : ryan.moveLeft(world); break;
-                    case 's' : ryan.moveDown(world); break;
-                    case 'd' : ryan.moveRight(world); break;
-                    default: break;
-                }
-            }
-
-            ter.renderFrame(world);
-            StdDraw.pause(5);
-        }
+        playerInteract(world, player);
     }
 
     public void quit() {
@@ -141,13 +150,12 @@ public class Game {
         String command = "";
         double x = 0.5;
         while (true) {
-            if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
-                break;
-            }
-
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
-                if (c == KeyEvent.VK_BACK_SPACE) {
+                if (c == KeyEvent.VK_ENTER) {
+                    break;
+                }
+                else if (c == KeyEvent.VK_BACK_SPACE) {
                     if (!command.equals("")){
                         command = command.substring(0, command.length() - 1);
                         drawCommand(x, command);
@@ -159,7 +167,7 @@ public class Game {
                     drawCommand(x, command);
                 }
 
-                StdDraw.pause(100);
+                StdDraw.pause(5);
             }
 
         }
@@ -236,7 +244,8 @@ public class Game {
                     }
                     SEED = Long.parseLong(seed);
                     worldGenerator.setSeed(SEED);
-                    world = worldGenerator.generate();
+                    worldGenerator.generate();
+                    world = worldGenerator.getWorld();
                     break;
                 case 'l': world = loadWorld(); break;
                 case 's':
@@ -255,12 +264,12 @@ public class Game {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);
                 SEED = (long) os.readObject();
-                personLocationList = (ArrayList<Location>) os.readObject();
+                PersonData personData = (PersonData) os.readObject();
                 worldGenerator.setSeed(SEED);
-                TETile[][] world = worldGenerator.generate();
-                for (Location location : personLocationList) {
-                    world[location.getxPos()][location.getyPos()] = Tileset.PLAYER;
-                }
+                worldGenerator.generate();
+                player = new Explorer(personData);
+                worldGenerator.addPerson(player);
+                TETile[][] world = worldGenerator.getWorld();
                 os.close();
                 return world;
             } catch (FileNotFoundException e) {
@@ -288,7 +297,7 @@ public class Game {
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(SEED);
-            os.writeObject(personLocationList);
+            os.writeObject(player.getPersonData());
             os.close();
         }  catch (FileNotFoundException e) {
             System.out.println("file not found");
